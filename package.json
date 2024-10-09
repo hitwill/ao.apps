@@ -22,6 +22,7 @@
 		"globals": "^15.0.0",
 		"prettier": "^3.1.1",
 		"prettier-plugin-svelte": "^3.1.2",
+		"shadcn-svelte": "^0.13.0",
 		"svelte": "^4.2.7",
 		"svelte-check": "^4.0.0",
 		"typescript": "^5.0.0",
@@ -29,5 +30,9 @@
 		"vite": "^5.0.3"
 	},
 	"type": "module",
-	"dependencies": {}
+	"dependencies": {
+		"clsx": "^2.1.1",
+		"tailwind-merge": "^2.5.3",
+		"tailwind-variants": "^0.2.1"
+	}
 }
