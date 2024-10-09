@@ -1,5 +1,7 @@
 export interface QueryResult {
     status: boolean;
+    data?: Resource | Resource[];
+    error?: string;
 }
 
 export interface Resource {
@@ -10,4 +12,6 @@ export interface Resource {
     type: string;
     tags: string;
     votes?: number;
+    created_at?: string;
+    updated_at?: string;
 }
