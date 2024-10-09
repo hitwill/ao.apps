@@ -1,4 +1,8 @@
-import type { Resource, QueryResult } from './types';
+import type {
+    MultipleResourceResult,
+    Resource,
+    SingleResourceResult,
+} from './types';
 
 const mockResources: Resource[] = [
     {
@@ -60,14 +64,14 @@ const mockResources: Resource[] = [
 ];
 
 export class MockDatabaseService {
-    async getResources(): Promise<QueryResult> {
+    async getResources(): Promise<MultipleResourceResult> {
         return {
             status: true,
             data: mockResources,
         };
     }
 
-    async getResourceById(id: number): Promise<QueryResult> {
+    async getResourceById(id: number): Promise<SingleResourceResult> {
         const resource = mockResources.find((r) => r.id === id);
         if (resource) {
             return {

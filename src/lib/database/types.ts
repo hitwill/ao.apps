@@ -6,8 +6,8 @@ export interface Resource {
     type: string;
     tags: string;
     votes?: number;
-    createdAt?: string;
-    updatedAt?: string;
+    created_at?: string;
+    updated_at?: string;
 }
 
 export interface BasicQueryResponse {
