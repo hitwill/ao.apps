@@ -1,11 +1,16 @@
 import { MockDatabaseService } from './mockdata';
-import type { QueryResult, Resource } from './types';
+import type {
+    BasicQueryResponse,
+    MultipleResourceResult,
+    Resource,
+    SingleResourceResult,
+} from './types';
 
 //TODO: Add API URL
 const EXTERNAL_API_URL = '';
 
 class DatabaseService {
-    private async sendQuery(query: string): Promise<QueryResult> {
+    private async sendQuery(query: string): Promise<BasicQueryResponse> {
         const response = await fetch(EXTERNAL_API_URL, {
             method: 'POST',
             headers: {
@@ -21,7 +26,7 @@ class DatabaseService {
         return await response.json();
     }
 
-    async createResource(resource: Resource): Promise<QueryResult> {
+    async createResource(resource: Resource): Promise<BasicQueryResponse> {
         const query = `
       INSERT INTO resources (name, link, description, type, tags, votes, created_at, updated_at)
       VALUES ('${resource.name}', '${resource.link}', '${resource.description}', '${resource.type}', '${resource.tags}', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
@@ -29,13 +34,13 @@ class DatabaseService {
         return this.sendQuery(query);
     }
 
-    async getResources(): Promise<QueryResult> {
+    async getResources(): Promise<MultipleResourceResult> {
         return new MockDatabaseService().getResources();
         const query = 'SELECT * FROM resources ORDER BY votes DESC;';
         return this.sendQuery(query);
     }
 
-    async getResourceById(id: number): Promise<QueryResult> {
+    async getResourceById(id: number): Promise<SingleResourceResult> {
         return new MockDatabaseService().getResourceById(id);
 
         const query = `SELECT * FROM resources WHERE id = ${id};`;
@@ -45,7 +50,7 @@ class DatabaseService {
     async updateResource(
         id: number,
         resource: Partial<Resource>
-    ): Promise<QueryResult> {
+    ): Promise<BasicQueryResponse> {
         const setStatements = Object.entries(resource)
             .map(([key, value]) => `${key} = '${value}'`)
             .join(', ');
@@ -57,12 +62,12 @@ class DatabaseService {
         return this.sendQuery(query);
     }
 
-    async deleteResource(id: number): Promise<QueryResult> {
+    async deleteResource(id: number): Promise<BasicQueryResponse> {
         const query = `DELETE FROM resources WHERE id = ${id};`;
         return this.sendQuery(query);
     }
 
-    async upvoteResource(id: number): Promise<QueryResult> {
+    async upvoteResource(id: number): Promise<BasicQueryResponse> {
         const query = `
       UPDATE resources
       SET votes = votes + 1, updated_at = CURRENT_TIMESTAMP
