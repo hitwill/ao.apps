@@ -1,3 +1,4 @@
+import { MockDatabaseService } from './mockdata';
 import type { QueryResult, Resource } from './types';
 
 //TODO: Add API URL
@@ -29,11 +30,14 @@ class DatabaseService {
     }
 
     async getResources(): Promise<QueryResult> {
+        return new MockDatabaseService().getResources();
         const query = 'SELECT * FROM resources ORDER BY votes DESC;';
         return this.sendQuery(query);
     }
 
     async getResourceById(id: number): Promise<QueryResult> {
+        return new MockDatabaseService().getResourceById(id);
+
         const query = `SELECT * FROM resources WHERE id = ${id};`;
         return this.sendQuery(query);
     }
