@@ -1,19 +1,7 @@
+import type { QueryResult, Resource } from './types';
+
 //TODO: Add API URL
 const EXTERNAL_API_URL = '';
-
-interface QueryResult {
-    status: boolean;
-}
-
-interface Resource {
-    id?: number;
-    name: string;
-    link: string;
-    description: string;
-    type: string;
-    tags: string;
-    votes?: number;
-}
 
 class DatabaseService {
     private async sendQuery(query: string): Promise<QueryResult> {
