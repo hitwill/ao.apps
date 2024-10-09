@@ -13,36 +13,64 @@
     import { Card } from '$lib/components/ui/card';
     import { ArrowUpCircle, Search } from 'lucide-svelte';
     import { databaseService } from '$lib/database/DatabaseService';
-    import type { QueryResult, Resource } from '$lib/database/types';
+    import type { Resource } from '$lib/database/types';
+    import { writable } from 'svelte/store';
 
-    let resources: any[] | Resource;
+    interface SortOption {
+        value: 'popular' | 'newest';
+        label: string;
+    }
+
+    const sortOptions: SortOption[] = [
+        { value: 'popular', label: 'Most Popular' },
+        { value: 'newest', label: 'Newest' },
+    ];
+
+    let resources: Resource[] = [];
     let searchQuery = '';
-    let currentSort = 'popular';
     let currentPage = 1;
     const itemsPerPage = 10;
+
+    let currentSort = writable<{ value: 'popular' | 'newest' }>({
+        value: 'popular',
+    });
+
+    function handleSort(event: CustomEvent<{ value: 'popular' | 'newest' }>) {
+        currentSort.set(event.detail);
+        sortResources();
+    }
 
     onMount(async () => {
         await fetchResources();
     });
 
-    async function fetchResources() {
+    async function fetchResources(): Promise<void> {
         const result = await databaseService.getResources();
         resources = result.data || [];
         sortResources();
     }
 
-    function sortResources() {
-        resources = resources.sort((a, b) => {
-            if (currentSort === 'popular') return b.votes - a.votes;
-            if (currentSort === 'newest')
-                return new Date(b.created_at) - new Date(a.created_at);
+    import { get } from 'svelte/store';
+
+    function sortResources(): void {
+        resources = resources.sort((a: Resource, b: Resource) => {
+            const sortValue = get(currentSort).value; // Access the value property
+            if (sortValue === 'popular') {
+                return (b.votes ?? 0) - (a.votes ?? 0);
+            }
+            if (sortValue === 'newest') {
+                return (
+                    new Date(b.created_at || '').getTime() -
+                    new Date(a.created_at || '').getTime()
+                );
+            }
             return 0;
         });
     }
 
-    function handleSearch() {
+    function handleSearch(): void {
         resources = resources.filter(
-            (resource) =>
+            (resource: Resource) =>
                 resource.name
                     .toLowerCase()
                     .includes(searchQuery.toLowerCase()) ||
@@ -53,7 +81,7 @@
         );
     }
 
-    async function handleUpvote(id: number) {
+    async function handleUpvote(id: number): Promise<void> {
         await databaseService.upvoteResource(id);
         await fetchResources();
     }
@@ -106,13 +134,14 @@
 
     <div class="flex justify-between items-center mb-6">
         <Button variant="outline">Filters</Button>
-        <Select bind:value={currentSort} on:change={sortResources}>
+        <Select bind:selected={$currentSort} on:select={handleSort}>
             <SelectTrigger class="w-[180px]">
                 <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
-                <SelectItem value="popular">Most Popular</SelectItem>
-                <SelectItem value="newest">Newest</SelectItem>
+                {#each sortOptions as option}
+                    <SelectItem value={option}>{option.label}</SelectItem>
+                {/each}
             </SelectContent>
         </Select>
     </div>
@@ -137,7 +166,9 @@
                     </div>
                     <Button
                         variant="ghost"
-                        on:click={() => handleUpvote(resource.id)}
+                        on:click={() =>
+                            resource.id !== undefined &&
+                            handleUpvote(resource.id)}
                         class="flex items-center"
                     >
                         <ArrowUpCircle class="mr-1" size={16} />
@@ -157,9 +188,9 @@
         >
             Previous
         </Button>
-        <span class="flex items-center mx-4"
-            >Page {currentPage} of {totalPages}</span
-        >
+        <span class="flex items-center mx-4">
+            Page {currentPage} of {totalPages}
+        </span>
         <Button
             variant="outline"
             on:click={() => currentPage++}
