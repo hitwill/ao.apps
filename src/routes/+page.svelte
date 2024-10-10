@@ -18,6 +18,7 @@
         Globe,
         Book,
         AlertTriangle,
+        Layers,
     } from 'lucide-svelte';
     import { databaseService } from '$lib/database/DatabaseService';
     import type { Resource } from '$lib/database/types';
@@ -51,13 +52,25 @@
         label: 'All Categories',
     });
 
+    let selectedEcosystem = writable<Selected<string>>({
+        value: 'all',
+        label: 'All Ecosystems',
+    });
+
     let isLoading = true;
 
     const categories = [
-        { value: 'all', label: 'All' },
+        { value: 'all', label: 'All Categories' },
         { value: 'app', label: 'Apps' },
         { value: 'website', label: 'Websites' },
         { value: 'library', label: 'Libraries' },
+        { value: 'smart-contract', label: 'Smart Contracts' },
+    ];
+
+    const ecosystems = [
+        { value: 'all', label: 'All Ecosystems' },
+        { value: 'arweave', label: 'Arweave' },
+        { value: 'ao', label: 'AO' },
     ];
 
     onMount(async () => {
@@ -116,21 +129,26 @@
                 return Globe;
             case 'library':
                 return Book;
+            case 'smart-contract':
+                return Layers;
             default:
                 return AlertTriangle;
         }
     }
 
-    $: filteredResources =
-        $selectedCategory.value === 'all'
-            ? resources
-            : resources.filter(
-                  (resource) => resource.type === $selectedCategory.value
-              );
+    $: filteredResources = resources.filter((resource) => {
+        const categoryMatch =
+            $selectedCategory.value === 'all' ||
+            resource.type === $selectedCategory.value;
+        const ecosystemMatch =
+            $selectedEcosystem.value === 'all' ||
+            resource.ecosystem === $selectedEcosystem.value;
+        return categoryMatch && ecosystemMatch;
+    });
 </script>
 
 <svelte:head>
-    <title>Discover the Arweave Universe | Resource Directory</title>
+    <title>Discover Arweave & AO Ecosystems | Resource Directory</title>
 </svelte:head>
 
 <main class="container mx-auto px-4 py-8">
@@ -138,11 +156,11 @@
         <div class="flex justify-between items-center">
             <div>
                 <h1 class="text-4xl font-bold mb-2">
-                    Discover the Arweave Universe
+                    Discover the Arweave & AO Cosmos
                 </h1>
                 <p class="text-xl text-gray-600">
                     Your gateway to apps, tools, and resources in the Arweave
-                    ecosystem
+                    and AO ecosystems
                 </p>
             </div>
             <Button href="/register">Add Your Resource</Button>
@@ -153,7 +171,7 @@
         <div class="relative">
             <Input
                 type="text"
-                placeholder="Find apps, tools, or libraries in the Arweave ecosystem"
+                placeholder="Discover apps, tools, libraries, or smart contracts"
                 bind:value={searchQuery}
                 on:input={handleSearch}
                 class="pr-10"
@@ -164,11 +182,24 @@
             />
         </div>
         <p class="text-sm text-gray-500 mt-2">
-            Pro tip: Use tags to refine your search
+            Pro tip: Use tags or ecosystem names to refine your search
         </p>
     </div>
 
     <div class="flex justify-between items-center mb-6">
+        <Select bind:selected={$selectedEcosystem}>
+            <SelectTrigger class="w-[180px]">
+                <SelectValue placeholder="Select ecosystem" />
+            </SelectTrigger>
+            <SelectContent>
+                {#each ecosystems as ecosystem}
+                    <SelectItem value={ecosystem.value}
+                        >{ecosystem.label}</SelectItem
+                    >
+                {/each}
+            </SelectContent>
+        </Select>
+
         <Select bind:selected={$selectedCategory}>
             <SelectTrigger class="w-[180px]">
                 <SelectValue placeholder="Select category" />
@@ -228,6 +259,9 @@
                                 <h3 class="text-xl font-semibold">
                                     {resource.name}
                                 </h3>
+                                <span class="ml-2 text-sm text-gray-500"
+                                    >{resource.ecosystem}</span
+                                >
                             </div>
                             <p class="text-gray-600 mb-2">
                                 {resource.description}

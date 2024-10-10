@@ -5,6 +5,7 @@ export interface Resource {
     description: string;
     type: string;
     tags: string;
+    ecosystem: 'arweave' | 'ao' | 'both';
     votes?: number;
     created_at?: string;
     updated_at?: string;
