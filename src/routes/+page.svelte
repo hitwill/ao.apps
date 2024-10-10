@@ -155,9 +155,7 @@
     <header class="mb-8">
         <div class="flex justify-between items-center">
             <div>
-                <h1 class="text-4xl font-bold mb-2">
-                    Discover the Arweave & AO Cosmos
-                </h1>
+                <h1 class="text-4xl font-bold mb-2">AR / AO Cosmos</h1>
                 <p class="text-xl text-gray-600">
                     Your gateway to apps, tools, and resources in the Arweave
                     and AO ecosystems
