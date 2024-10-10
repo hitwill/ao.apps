@@ -1,5 +1,4 @@
 <script lang="ts">
-    // src/routes/+page.svelte
     import { onMount } from 'svelte';
     import { writable } from 'svelte/store';
     import { databaseService } from '$lib/database/DatabaseService';
@@ -11,6 +10,7 @@
     import SearchBar from '$lib/components/SearchBar.svelte';
     import ResourceSkeletons from '$lib/components/ResourceSkeletons.svelte';
     import { Button } from '$lib/components/ui/button';
+    import InfiniteLoading from 'svelte-infinite-loading';
 
     let resources: FetchResource[] = [];
     let searchQuery = writable('');
@@ -18,21 +18,48 @@
     let selectedCategory = writable(CATEGORIES[0]);
     let selectedEcosystem = writable(ECOSYSTEMS[0]);
     let isLoading = writable(true);
+    let page = 0;
+    const ITEMS_PER_PAGE = 5;
 
     onMount(async () => {
-        await fetchResources();
         $isLoading = false;
     });
 
-    async function fetchResources(): Promise<void> {
-        const result = await databaseService.getResources();
-        resources = result.data || [];
-        resources = sortResources(resources, $currentSort.value);
+    async function fetchResources(
+        infiniteLoadingEvent?: CustomEvent
+    ): Promise<void> {
+        const result = await databaseService.getResources(page, ITEMS_PER_PAGE);
+
+        if (result.data && result.data.length > 0) {
+            resources = [...resources, ...result.data];
+            resources = sortResources(resources, $currentSort.value);
+
+            if (infiniteLoadingEvent) {
+                page++;
+                infiniteLoadingEvent.detail.loaded();
+                if (result.data.length < ITEMS_PER_PAGE) {
+                    infiniteLoadingEvent.detail.complete();
+                }
+            }
+        } else {
+            if (infiniteLoadingEvent) {
+                infiniteLoadingEvent.detail.complete();
+            }
+        }
     }
 
     async function handleUpvote(id: number): Promise<void> {
         await databaseService.upvoteResource(id);
-        await fetchResources();
+        resources = resources.map((r) =>
+            r.id === id ? { ...r, votes: (r.votes || 0) + 1 } : r
+        );
+        resources = sortResources(resources, $currentSort.value);
+    }
+
+    function resetResources() {
+        resources = [];
+        page = 0;
+        fetchResources();
     }
 
     $: filteredResources = filterResources(
@@ -42,6 +69,14 @@
         $selectedEcosystem.value
     );
     $: sortedResources = sortResources(filteredResources, $currentSort.value);
+
+    $: {
+        $searchQuery;
+        $selectedCategory;
+        $selectedEcosystem;
+        $currentSort;
+        resetResources();
+    }
 </script>
 
 <svelte:head>
@@ -68,7 +103,7 @@
         bind:selectedEcosystem
         bind:selectedCategory
         bind:currentSort
-        on:sort={fetchResources}
+        on:sort={resetResources}
     />
 
     {#if $isLoading}
@@ -86,15 +121,12 @@
             {#each sortedResources as resource (resource.id)}
                 <ResourceCard
                     {resource}
-                    on:upvote={() => handleUpvote(resource.id || 0)}
+                    on:upvote={() => handleUpvote(resource.id)}
                 />
             {/each}
         </div>
+        <InfiniteLoading on:infinite={fetchResources} />
     {/if}
-
-    <div class="mt-8 text-center">
-        <Button variant="outline" class="mx-auto">Load More</Button>
-    </div>
 </main>
 
 <style>
