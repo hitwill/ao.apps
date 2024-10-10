@@ -11,37 +11,58 @@
         SelectItem,
     } from '$lib/components/ui/select';
     import { Card } from '$lib/components/ui/card';
-    import { ArrowUpCircle, Search } from 'lucide-svelte';
+    import {
+        ArrowUpCircle,
+        Search,
+        Sticker,
+        Globe,
+        Book,
+        AlertTriangle,
+    } from 'lucide-svelte';
     import { databaseService } from '$lib/database/DatabaseService';
     import type { Resource } from '$lib/database/types';
     import { writable } from 'svelte/store';
 
     interface SortOption {
-        value: 'popular' | 'newest';
+        value: 'popular' | 'newest' | 'alphabetical';
         label: string;
     }
 
     const sortOptions: SortOption[] = [
         { value: 'popular', label: 'Most Popular' },
-        { value: 'newest', label: 'Newest' },
+        { value: 'newest', label: 'Most Recent' },
+        { value: 'alphabetical', label: 'Alphabetical' },
     ];
 
     let resources: Resource[] = [];
     let searchQuery = '';
-    let currentPage = 1;
-    const itemsPerPage = 10;
-
-    let currentSort = writable<{ value: 'popular' | 'newest' }>({
+    let currentSort = writable<SortOption>({
         value: 'popular',
+        label: 'Most Popular',
     });
 
-    function handleSort(event: CustomEvent<{ value: 'popular' | 'newest' }>) {
-        currentSort.set(event.detail);
-        sortResources();
-    }
+    type Selected<T> = {
+        value: T;
+        label: string;
+    };
+
+    let selectedCategory = writable<Selected<string>>({
+        value: 'all',
+        label: 'All Categories',
+    });
+
+    let isLoading = true;
+
+    const categories = [
+        { value: 'all', label: 'All' },
+        { value: 'app', label: 'Apps' },
+        { value: 'website', label: 'Websites' },
+        { value: 'library', label: 'Libraries' },
+    ];
 
     onMount(async () => {
         await fetchResources();
+        isLoading = false;
     });
 
     async function fetchResources(): Promise<void> {
@@ -50,11 +71,9 @@
         sortResources();
     }
 
-    import { get } from 'svelte/store';
-
     function sortResources(): void {
         resources = resources.sort((a: Resource, b: Resource) => {
-            const sortValue = get(currentSort).value; // Access the value property
+            const sortValue = $currentSort.value;
             if (sortValue === 'popular') {
                 return (b.votes ?? 0) - (a.votes ?? 0);
             }
@@ -63,6 +82,9 @@
                     new Date(b.created_at || '').getTime() -
                     new Date(a.created_at || '').getTime()
                 );
+            }
+            if (sortValue === 'alphabetical') {
+                return a.name.localeCompare(b.name);
             }
             return 0;
         });
@@ -86,41 +108,52 @@
         await fetchResources();
     }
 
-    $: paginatedResources = resources.slice(
-        (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage
-    );
-    $: totalPages = Math.ceil(resources.length / itemsPerPage);
+    function getResourceIcon(type: string) {
+        switch (type) {
+            case 'app':
+                return Sticker;
+            case 'website':
+                return Globe;
+            case 'library':
+                return Book;
+            default:
+                return AlertTriangle;
+        }
+    }
+
+    $: filteredResources =
+        $selectedCategory.value === 'all'
+            ? resources
+            : resources.filter(
+                  (resource) => resource.type === $selectedCategory.value
+              );
 </script>
 
 <svelte:head>
-    <title>Arweave Ecosystem Resource Directory</title>
+    <title>Discover the Arweave Universe | Resource Directory</title>
 </svelte:head>
 
 <main class="container mx-auto px-4 py-8">
     <header class="mb-8">
         <div class="flex justify-between items-center">
-            <h1 class="text-3xl font-bold">
-                Arweave Ecosystem Resource Directory
-            </h1>
-            <Button href="/register">Register App</Button>
+            <div>
+                <h1 class="text-4xl font-bold mb-2">
+                    Discover the Arweave Universe
+                </h1>
+                <p class="text-xl text-gray-600">
+                    Your gateway to apps, tools, and resources in the Arweave
+                    ecosystem
+                </p>
+            </div>
+            <Button href="/register">Add Your Resource</Button>
         </div>
     </header>
-
-    <section class="bg-gray-100 p-8 rounded-lg mb-8">
-        <h2 class="text-2xl font-semibold mb-2">
-            Discover and Explore Arweave Resources
-        </h2>
-        <p class="text-gray-600">
-            Find apps, websites, libraries, and more in the Arweave ecosystem
-        </p>
-    </section>
 
     <div class="mb-6">
         <div class="relative">
             <Input
                 type="text"
-                placeholder="Search for resources..."
+                placeholder="Find apps, tools, or libraries in the Arweave ecosystem"
                 bind:value={searchQuery}
                 on:input={handleSearch}
                 class="pr-10"
@@ -130,11 +163,26 @@
                 size={20}
             />
         </div>
+        <p class="text-sm text-gray-500 mt-2">
+            Pro tip: Use tags to refine your search
+        </p>
     </div>
 
     <div class="flex justify-between items-center mb-6">
-        <Button variant="outline">Filters</Button>
-        <Select bind:selected={$currentSort} on:select={handleSort}>
+        <Select bind:selected={$selectedCategory}>
+            <SelectTrigger class="w-[180px]">
+                <SelectValue placeholder="Select category" />
+            </SelectTrigger>
+            <SelectContent>
+                {#each categories as category}
+                    <SelectItem value={category.value}
+                        >{category.label}</SelectItem
+                    >
+                {/each}
+            </SelectContent>
+        </Select>
+
+        <Select bind:selected={$currentSort} on:select={sortResources}>
             <SelectTrigger class="w-[180px]">
                 <SelectValue placeholder="Sort by" />
             </SelectTrigger>
@@ -146,58 +194,86 @@
         </Select>
     </div>
 
-    <div class="space-y-4">
-        {#each paginatedResources as resource (resource.id)}
-            <Card class="p-4">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <h3 class="text-xl font-semibold mb-2">
-                            {resource.name}
-                        </h3>
-                        <p class="text-gray-600 mb-2">{resource.description}</p>
-                        <div class="flex flex-wrap gap-2">
-                            {#each resource.tags.split(',') as tag}
-                                <span
-                                    class="bg-gray-200 text-gray-700 px-2 py-1 rounded text-sm"
-                                    >{tag.trim()}</span
-                                >
-                            {/each}
+    {#if isLoading}
+        <div class="space-y-4">
+            {#each Array(5) as _}
+                <Card class="p-4 animate-pulse">
+                    <div class="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
+                    <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+                </Card>
+            {/each}
+        </div>
+    {:else if filteredResources.length === 0}
+        <div class="text-center py-8">
+            <p class="text-xl mb-4">
+                No resources found. Try broadening your search or be the first
+                to add a resource in this category!
+            </p>
+            <Button href="/register">Add a Resource</Button>
+        </div>
+    {:else}
+        <div class="space-y-4">
+            {#each filteredResources as resource (resource.id)}
+                <Card
+                    class="p-4 hover:shadow-lg transition-shadow duration-200"
+                >
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <div class="flex items-center mb-2">
+                                <svelte:component
+                                    this={getResourceIcon(resource.type)}
+                                    size={20}
+                                    class="mr-2"
+                                />
+                                <h3 class="text-xl font-semibold">
+                                    {resource.name}
+                                </h3>
+                            </div>
+                            <p class="text-gray-600 mb-2">
+                                {resource.description}
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                {#each resource.tags.split(',') as tag}
+                                    <span
+                                        class="bg-gray-200 text-gray-700 px-2 py-1 rounded text-sm"
+                                        >{tag.trim()}</span
+                                    >
+                                {/each}
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-end">
+                            <Button
+                                variant="ghost"
+                                on:click={() =>
+                                    resource.id !== undefined &&
+                                    handleUpvote(resource.id)}
+                                class="flex items-center mb-2"
+                                aria-label="Upvote this resource"
+                            >
+                                <ArrowUpCircle class="mr-1" size={16} />
+                                {resource.votes}
+                            </Button>
+                            <Button
+                                variant="outline"
+                                href={`/details/${resource.id}`}
+                                class="text-sm"
+                            >
+                                View Details
+                            </Button>
                         </div>
                     </div>
-                    <Button
-                        variant="ghost"
-                        on:click={() =>
-                            resource.id !== undefined &&
-                            handleUpvote(resource.id)}
-                        class="flex items-center"
-                    >
-                        <ArrowUpCircle class="mr-1" size={16} />
-                        {resource.votes}
-                    </Button>
-                </div>
-            </Card>
-        {/each}
-    </div>
+                </Card>
+            {/each}
+        </div>
+    {/if}
 
-    <div class="flex justify-center mt-8">
-        <Button
-            variant="outline"
-            on:click={() => currentPage--}
-            disabled={currentPage === 1}
-            class="mr-2"
-        >
-            Previous
-        </Button>
-        <span class="flex items-center mx-4">
-            Page {currentPage} of {totalPages}
-        </span>
-        <Button
-            variant="outline"
-            on:click={() => currentPage++}
-            disabled={currentPage === totalPages}
-            class="ml-2"
-        >
-            Next
-        </Button>
+    <div class="mt-8 text-center">
+        <Button variant="outline" class="mx-auto">Load More</Button>
     </div>
 </main>
+
+<style>
+    :global(body) {
+        background-color: #f9fafb;
+    }
+</style>
