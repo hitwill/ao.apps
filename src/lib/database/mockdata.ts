@@ -1,10 +1,10 @@
 import type {
+    FetchResource,
     MultipleResourceResult,
-    Resource,
     SingleResourceResult,
 } from './types';
 
-const mockResources: Resource[] = [
+const mockResources: FetchResource[] = [
     {
         id: 1,
         name: 'ArDrive',
@@ -132,10 +132,16 @@ const mockResources: Resource[] = [
 ];
 
 export class MockDatabaseService {
-    async getResources(): Promise<MultipleResourceResult> {
+    async getResources(
+        page: number = 0,
+        itemsPerPage: number = 10
+    ): Promise<MultipleResourceResult> {
+        const start = page * itemsPerPage;
+        const end = start + itemsPerPage;
+        const paginatedResources = mockResources.slice(start, end);
         return {
             status: true,
-            data: mockResources,
+            data: paginatedResources,
         };
     }
 

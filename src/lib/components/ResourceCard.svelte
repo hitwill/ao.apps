@@ -8,9 +8,9 @@
         AlertTriangle,
         Layers,
     } from 'lucide-svelte';
-    import type { Resource } from '$lib/database/types';
+    import type { FetchResource } from '$lib/database/types';
 
-    export let resource: Resource;
+    export let resource: FetchResource;
 
     function getResourceIcon(type: string) {
         switch (type) {

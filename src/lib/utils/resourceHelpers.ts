@@ -1,9 +1,9 @@
 // src/lib/utils/resourceHelpers.ts
-import type { Resource } from '$lib/database/types';
+import type { FetchResource } from '$lib/database/types';
 import type { SortOption } from '$lib/types';
 
 export function filterResources(
-    resources: Resource[],
+    resources: FetchResource[],
     searchQuery: string,
     category: string,
     ecosystem: string
@@ -25,7 +25,7 @@ export function filterResources(
 }
 
 export function sortResources(
-    resources: Resource[],
+    resources: FetchResource[],
     sortOption: SortOption['value']
 ): Resource[] {
     return [...resources].sort((a: Resource, b: Resource) => {

@@ -2,7 +2,7 @@ import { MockDatabaseService } from './mockdata';
 import type {
     BasicQueryResponse,
     MultipleResourceResult,
-    Resource,
+    SaveResource,
     SingleResourceResult,
 } from './types';
 
@@ -26,17 +26,20 @@ class DatabaseService {
         return await response.json();
     }
 
-    async createResource(resource: Resource): Promise<BasicQueryResponse> {
+    async createResource(resource: SaveResource): Promise<BasicQueryResponse> {
         const query = `
-      INSERT INTO resources (name, link, description, type, tags, votes, created_at, updated_at)
-      VALUES ('${resource.name}', '${resource.link}', '${resource.description}', '${resource.type}', '${resource.tags}', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-    `;
+    INSERT INTO resources (name, link, description, type, tags, votes, created_at, updated_at)
+    VALUES ('${resource.name}', '${resource.link}', '${resource.description}', '${resource.type}', '${resource.tags}', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+  `;
         return this.sendQuery(query);
     }
 
-    async getResources(): Promise<MultipleResourceResult> {
-        return new MockDatabaseService().getResources();
-        const query = 'SELECT * FROM resources ORDER BY votes DESC;';
+    async getResources(
+        page: number = 0,
+        itemsPerPage: number = 10
+    ): Promise<MultipleResourceResult> {
+        return new MockDatabaseService().getResources(page, itemsPerPage);
+        const query = `SELECT * FROM resources ORDER BY votes DESC LIMIT ${itemsPerPage} OFFSET ${page * itemsPerPage};`;
         return this.sendQuery(query);
     }
 
@@ -49,16 +52,16 @@ class DatabaseService {
 
     async updateResource(
         id: number,
-        resource: Partial<Resource>
+        resource: Partial<SaveResource>
     ): Promise<BasicQueryResponse> {
         const setStatements = Object.entries(resource)
             .map(([key, value]) => `${key} = '${value}'`)
             .join(', ');
         const query = `
-      UPDATE resources
-      SET ${setStatements}, updated_at = CURRENT_TIMESTAMP
-      WHERE id = ${id};
-    `;
+    UPDATE resources
+    SET ${setStatements}, updated_at = CURRENT_TIMESTAMP
+    WHERE id = ${id};
+  `;
         return this.sendQuery(query);
     }
 
@@ -69,10 +72,10 @@ class DatabaseService {
 
     async upvoteResource(id: number): Promise<BasicQueryResponse> {
         const query = `
-      UPDATE resources
-      SET votes = votes + 1, updated_at = CURRENT_TIMESTAMP
-      WHERE id = ${id};
-    `;
+    UPDATE resources
+    SET votes = votes + 1, updated_at = CURRENT_TIMESTAMP
+    WHERE id = ${id};
+  `;
         return this.sendQuery(query);
     }
 

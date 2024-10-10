@@ -3,7 +3,7 @@
     import { onMount } from 'svelte';
     import { writable } from 'svelte/store';
     import { databaseService } from '$lib/database/DatabaseService';
-    import type { Resource } from '$lib/database/types';
+    import type { FetchResource } from '$lib/database/types';
     import { SORT_OPTIONS, CATEGORIES, ECOSYSTEMS } from '$lib/constants';
     import { filterResources, sortResources } from '$lib/utils/resourceHelpers';
     import ResourceCard from '$lib/components/ResourceCard.svelte';
@@ -12,7 +12,7 @@
     import ResourceSkeletons from '$lib/components/ResourceSkeletons.svelte';
     import { Button } from '$lib/components/ui/button';
 
-    let resources: Resource[] = [];
+    let resources: FetchResource[] = [];
     let searchQuery = writable('');
     let currentSort = writable(SORT_OPTIONS[0]);
     let selectedCategory = writable(CATEGORIES[0]);
