@@ -20,7 +20,4 @@
             size={20}
         />
     </div>
-    <p class="text-sm text-gray-500 mt-2">
-        Pro tip: Use tags or ecosystem names to refine your search
-    </p>
 </div>
