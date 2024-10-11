@@ -10,7 +10,10 @@ export const SORT_OPTIONS: SortOption[] = [
 export const CATEGORIES: Selected<string>[] = [
     { value: 'all', label: 'All Categories' },
     { value: 'app', label: 'Apps' },
-    { value: 'website', label: 'Websites' },
+    { value: 'meme-coin', label: 'Meme Coins' },
+    { value: 'project', label: 'Projects' },
+    { value: 'websites', label: 'Websites' },
+    { value: 'tutorial', label: 'Tutorials' },
     { value: 'library', label: 'Libraries' },
     { value: 'smart-contract', label: 'Smart Contracts' },
 ];
