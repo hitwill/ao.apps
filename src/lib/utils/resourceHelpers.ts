@@ -15,10 +15,10 @@ export function filterResources(
             resource.description.toLowerCase().includes(lowercaseQuery) ||
             resource.tags.toLowerCase().includes(lowercaseQuery);
 
-        const categoryMatch = category === 'all' || resource.type === category;
+        const categoryMatch =
+            category === 'all' || resource.category === category;
         const ecosystemMatch =
             ecosystem === 'all' || resource.ecosystem === ecosystem;
-
         return searchMatch && categoryMatch && ecosystemMatch;
     });
 
