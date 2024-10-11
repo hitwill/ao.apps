@@ -4,7 +4,8 @@ export interface SaveResource {
     description: string;
     type: string;
     tags: string;
-    ecosystem: 'arweave' | 'ao' | 'both';
+    category: string;
+    ecosystem: 'arweave' | 'ao';
 }
 
 export interface FetchResource extends SaveResource {
