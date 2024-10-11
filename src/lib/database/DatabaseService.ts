@@ -36,8 +36,10 @@ class DatabaseService {
 
     async getResources(
         page: number = 0,
-        itemsPerPage: number = 10
+        itemsPerPage: number = 10,
+        searchParams = {}
     ): Promise<MultipleResourceResult> {
+        //TODO: update so it takes the cateogry, ecosystem, and tags, and replaces the filter functions (or update the functions to work with it)
         return new MockDatabaseService().getResources(page, itemsPerPage);
         const query = `SELECT * FROM resources ORDER BY votes DESC LIMIT ${itemsPerPage} OFFSET ${page * itemsPerPage};`;
         return this.sendQuery(query);

@@ -6,20 +6,23 @@ export function filterResources(
     resources: FetchResource[],
     searchQuery: string,
     category: string,
-    ecosystem: string
+    ecosystem: string,
+    tags: string[]
 ): FetchResource[] {
     const lowercaseQuery = searchQuery.toLowerCase();
     const filteredResources = resources.filter((resource: FetchResource) => {
         const searchMatch =
             resource.name.toLowerCase().includes(lowercaseQuery) ||
-            resource.description.toLowerCase().includes(lowercaseQuery) ||
-            resource.tags.toLowerCase().includes(lowercaseQuery);
+            resource.description.toLowerCase().includes(lowercaseQuery);
+        const tagMatch =
+            tags.length === 0 ||
+            tags.some((tag) => resource.tags.includes(tag));
 
         const categoryMatch =
             category === 'all' || resource.category === category;
         const ecosystemMatch =
             ecosystem === 'all' || resource.ecosystem === ecosystem;
-        return searchMatch && categoryMatch && ecosystemMatch;
+        return searchMatch && categoryMatch && ecosystemMatch && tagMatch;
     });
 
     // Ensure uniqueness based on id

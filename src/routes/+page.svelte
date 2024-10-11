@@ -17,6 +17,7 @@
     let currentSort = writable(SORT_OPTIONS[0]);
     let selectedCategory = writable(CATEGORIES[0]);
     let selectedEcosystem = writable(ECOSYSTEMS[0]);
+    let selectedTags = writable<string[]>([]);
     let isLoading = writable(true);
     let page = 0;
     const ITEMS_PER_PAGE = 5;
@@ -28,7 +29,16 @@
     async function fetchResources(
         infiniteLoadingEvent?: CustomEvent
     ): Promise<void> {
-        const result = await databaseService.getResources(page, ITEMS_PER_PAGE);
+        const result = await databaseService.getResources(
+            page,
+            ITEMS_PER_PAGE,
+            {
+                category: $selectedCategory.value,
+                ecosystem: $selectedEcosystem.value,
+                tags: $selectedTags,
+                searchQuery: $searchQuery,
+            }
+        );
 
         if (result.data && result.data.length > 0) {
             resources = [...resources, ...result.data];
@@ -66,7 +76,8 @@
         resources,
         $searchQuery,
         $selectedCategory.value,
-        $selectedEcosystem.value
+        $selectedEcosystem.value,
+        $selectedTags
     );
     $: sortedResources = sortResources(filteredResources, $currentSort.value);
 
@@ -105,6 +116,7 @@
         bind:selectedEcosystem
         bind:selectedCategory
         bind:currentSort
+        bind:selectedTags
         on:sort={resetResources}
     />
 
