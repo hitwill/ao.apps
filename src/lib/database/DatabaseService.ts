@@ -1,4 +1,3 @@
-import { MockDatabaseService } from './mockdata';
 import type {
     BasicQueryResponse,
     MultipleResourceResult,
@@ -40,14 +39,11 @@ class DatabaseService {
         searchParams = {}
     ): Promise<MultipleResourceResult> {
         //TODO: update so it takes the cateogry, ecosystem, and tags, and replaces the filter functions (or update the functions to work with it)
-        return new MockDatabaseService().getResources(page, itemsPerPage);
         const query = `SELECT * FROM resources ORDER BY votes DESC LIMIT ${itemsPerPage} OFFSET ${page * itemsPerPage};`;
         return this.sendQuery(query);
     }
 
     async getResourceById(id: number): Promise<SingleResourceResult> {
-        return new MockDatabaseService().getResourceById(id);
-
         const query = `SELECT * FROM resources WHERE id = ${id};`;
         return this.sendQuery(query);
     }
