@@ -62,3 +62,19 @@ Handlers.add(
     })
   end
 )
+
+Handlers.add(
+  "truncate",
+  { Action = "Truncate" },
+  function(msg)
+    local tableName = msg.Data
+    local query = string.format("DELETE FROM %s", tableName)
+    local response = DB:exec(query)
+    local result = json.encode({ response = response })
+
+    ao.send({
+      Target = msg.From,
+      Data = result
+    })
+  end
+)
