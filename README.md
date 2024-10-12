@@ -1,18 +1,10 @@
-# create-svelte
+# Arweave Ecosystem Resource Directory
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
+## Overview
 
-## Creating a project
+The Arweave Ecosystem Resource Directory is a decentralized platform designed to facilitate the discovery and sharing of resources within the Arweave ecosystem. It provides a comprehensive listing of applications, websites, libraries, and tools built on Arweave technology.
 
-If you're seeing this, you've probably already done this step. Congrats!
-
-```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+It is hosted on Arweave and data is stored using AO's [sqlite module.](https://github.com/permaweb/aos-sqlite)
 
 ## Developing
 
@@ -36,3 +28,10 @@ npm run build
 You can preview the production build with `npm run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+
+## Startup AOS process
+
+Startup:
+`aos ecosystem-database --wallet .aos.json --module=ghSkge2sIUD_F00ym5sEimC63BDBuBrq4b5OcwxOjiw`
+`.load src/lib/database/database.lua`
+`Send({ Target = ao.id, Action = "Query", Data = "SELECT ..." })`
