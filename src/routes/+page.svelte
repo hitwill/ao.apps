@@ -29,6 +29,15 @@
     async function fetchResources(
         infiniteLoadingEvent?: CustomEvent
     ): Promise<void> {
+        const sortMapping = {
+            popular: { field: 'votes', direction: 'DESC' },
+            newest: { field: 'created_at', direction: 'DESC' },
+            alphabetical: { field: 'name', direction: 'ASC' },
+        };
+
+        const sortOption =
+            sortMapping[$currentSort.value] || sortMapping.popular;
+
         const result = await databaseService.getResources(
             page,
             ITEMS_PER_PAGE,
@@ -36,13 +45,16 @@
                 category: $selectedCategory.value,
                 ecosystem: $selectedEcosystem.value,
                 tags: $selectedTags,
-                searchQuery: $searchQuery,
+                search: $searchQuery,
+            },
+            {
+                field: sortOption.field,
+                direction: sortOption.direction as 'ASC' | 'DESC',
             }
         );
 
         if (result.data && result.data.length > 0) {
             resources = [...resources, ...result.data];
-            resources = sortResources(resources, $currentSort.value);
 
             if (infiniteLoadingEvent) {
                 page++;
@@ -85,6 +97,7 @@
         $searchQuery;
         $selectedCategory;
         $selectedEcosystem;
+        $selectedTags;
         $currentSort;
         resetResources();
     }
