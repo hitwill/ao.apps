@@ -36,10 +36,48 @@ class DatabaseService {
     async getResources(
         page: number = 0,
         itemsPerPage: number = 10,
-        searchParams = {}
+        searchParams: {
+            category?: string;
+            ecosystem?: string;
+            tags?: string[];
+            search?: string;
+        } = {},
+        orderBy: { field: string; direction: 'ASC' | 'DESC' } = {
+            field: 'votes',
+            direction: 'DESC',
+        }
     ): Promise<MultipleResourceResult> {
-        //TODO: update so it takes the cateogry, ecosystem, and tags, and replaces the filter functions (or update the functions to work with it)
-        const query = `SELECT * FROM resources ORDER BY votes DESC LIMIT ${itemsPerPage} OFFSET ${page * itemsPerPage};`;
+        let query = 'SELECT * FROM resources';
+        const conditions: string[] = [];
+
+        if (searchParams.category) {
+            conditions.push(`category = '${searchParams.category}'`);
+        }
+
+        if (searchParams.ecosystem) {
+            conditions.push(`ecosystem = '${searchParams.ecosystem}'`);
+        }
+
+        if (searchParams.tags && searchParams.tags.length > 0) {
+            const tagConditions = searchParams.tags.map(
+                (tag) => `tags LIKE '%${tag}%'`
+            );
+            conditions.push(`(${tagConditions.join(' OR ')})`);
+        }
+
+        if (searchParams.search) {
+            conditions.push(
+                `(name LIKE '%${searchParams.search}%' OR description LIKE '%${searchParams.search}%')`
+            );
+        }
+
+        if (conditions.length > 0) {
+            query += ` WHERE ${conditions.join(' AND ')}`;
+        }
+
+        query += ` ORDER BY ${orderBy.field} ${orderBy.direction}`;
+        query += ` LIMIT ${itemsPerPage} OFFSET ${page * itemsPerPage}`;
+
         return this.sendQuery(query);
     }
 
