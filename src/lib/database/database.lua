@@ -145,11 +145,11 @@ Handlers.add(
     local query = string.format("SELECT * FROM %s WHERE id = ? LIMIT 1", data.table)
     local stmt = DB:prepare(query)
     stmt:bind_values(data.id)
-    local row = stmt:step()
     local result = {}
-    if row then
+    local row = stmt:step()
+    if row == sqlite3.ROW then
       for i = 0, stmt:columns() - 1 do
-        result[stmt:column_name(i)] = stmt:column_value(i)
+        result[stmt:get_name(i)] = stmt:get_value(i)
       end
     end
     stmt:finalize()
