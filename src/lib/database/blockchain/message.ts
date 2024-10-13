@@ -2,7 +2,7 @@ import { message, result } from '@permaweb/aoconnect';
 import { createDataItemSigner } from './signer';
 import { appsProcess, unsecureWallet } from './constants';
 
-export const sendMessage = async (
+export const callBlockchain = async (
     tags: { name: string; value: string }[],
     data = '',
     process = appsProcess,
