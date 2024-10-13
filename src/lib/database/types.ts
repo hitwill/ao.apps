@@ -18,7 +18,7 @@ export interface FetchResource extends SaveResource {
 export interface BasicQueryResponse {
     status: boolean;
     message?: string;
-    error?: string;
+    error?: unknown;
 }
 
 export interface QueryResponse<T = never> extends BasicQueryResponse {

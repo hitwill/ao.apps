@@ -1,13 +1,14 @@
 import { message, result } from '@permaweb/aoconnect';
 import { createDataItemSigner } from './signer';
 import { appsProcess, unsecureWallet } from './constants';
+import type { QueryResponse } from '../types';
 
 export const callBlockchain = async (
     tags: { name: string; value: string }[],
     data = '',
     process = appsProcess,
     signerJWK = JSON.stringify(unsecureWallet)
-): Promise<string> => {
+): Promise<QueryResponse<never>> => {
     const jwk = JSON.parse(signerJWK);
     try {
         const messageId = await message({
@@ -27,7 +28,12 @@ export const callBlockchain = async (
         }
 
         const response = Messages[0].Data;
-        return response ? JSON.parse(response) : null;
+
+        return {
+            status: true,
+            message: messageId,
+            data: response ? JSON.parse(response) : null,
+        };
     } catch (error) {
         console.error('Error sending message:', error, {
             jwk,
@@ -35,6 +41,10 @@ export const callBlockchain = async (
             tags,
             data,
         });
-        throw error;
+
+        return {
+            status: false,
+            error,
+        };
     }
 };

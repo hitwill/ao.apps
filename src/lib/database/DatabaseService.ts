@@ -2,6 +2,7 @@ import { callBlockchain } from './blockchain/message';
 import type {
     BasicQueryResponse,
     MultipleResourceResult,
+    QueryResponse,
     SaveResource,
     SingleResourceResult,
 } from './types';
@@ -16,12 +17,13 @@ class DatabaseService {
             | 'Truncate'
             | 'Insert'
             | 'Fetch'
-    ): Promise<BasicQueryResponse> {
+    ): Promise<QueryResponse> {
         const tags = [{ name: 'Action', value: action }];
         const stringifiedData =
             typeof data === 'string' ? data : JSON.stringify(data);
 
         const response = await callBlockchain(tags, stringifiedData);
+
         return response;
     }
 
