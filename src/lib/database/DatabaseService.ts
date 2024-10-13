@@ -50,11 +50,11 @@ class DatabaseService {
         let query = 'SELECT * FROM resources';
         const conditions: string[] = [];
 
-        if (searchParams.category) {
+        if (searchParams.category && searchParams.category !== 'all') {
             conditions.push(`category = '${searchParams.category}'`);
         }
 
-        if (searchParams.ecosystem) {
+        if (searchParams.ecosystem && searchParams.ecosystem !== 'all') {
             conditions.push(`ecosystem = '${searchParams.ecosystem}'`);
         }
 
