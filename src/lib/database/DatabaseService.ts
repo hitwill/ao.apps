@@ -22,7 +22,7 @@ class DatabaseService {
             typeof data === 'string' ? data : JSON.stringify(data);
 
         const response = await callBlockchain(tags, stringifiedData);
-        return JSON.parse(response);
+        return response;
     }
 
     async createResource(resource: SaveResource): Promise<BasicQueryResponse> {
