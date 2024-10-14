@@ -37,7 +37,7 @@
 		"@permaweb/aoconnect": "^0.0.59",
 		"bits-ui": "^0.21.16",
 		"clsx": "^2.1.1",
-		"lucide-svelte": "^0.451.0",
+		"lucide-svelte": "^0.452.0",
 		"svelte-infinite-loading": "^1.4.0",
 		"svelte-multiselect": "^10.3.0",
 		"tailwind-merge": "^2.5.3",
