@@ -11,6 +11,7 @@
     import ResourceSkeletons from '$lib/components/ResourceSkeletons.svelte';
     import { Button } from '$lib/components/ui/button';
     import InfiniteLoading from 'svelte-infinite-loading';
+    import AddResourceModal from '$lib/components/AddResourceModal.svelte';
 
     let resources: FetchResource[] = [];
     let searchQuery = writable('');
@@ -20,7 +21,9 @@
     let selectedTags = writable<string[]>([]);
     let isLoading = writable(true);
     let page = 0;
-    const ITEMS_PER_PAGE = 5;
+    let isModalOpen = false;
+
+    const ITEMS_PER_PAGE = 10;
 
     onMount(async () => {
         $isLoading = false;
@@ -84,6 +87,12 @@
         fetchResources();
     }
 
+    function handleResourceAdded(event: CustomEvent) {
+        const newResource = event.detail;
+        resources = [newResource, ...resources];
+        resources = sortResources(resources, $currentSort.value);
+    }
+
     $: filteredResources = filterResources(
         resources,
         $searchQuery,
@@ -119,7 +128,9 @@
                     and AO ecosystems
                 </p>
             </div>
-            <Button href="/register">Add Your Resource</Button>
+            <Button on:click={() => (isModalOpen = true)}
+                >Add Your Resource</Button
+            >
         </div>
     </header>
 
@@ -141,7 +152,8 @@
                 No resources found. Try broadening your search or be the first
                 to add a resource in this category!
             </p>
-            <Button href="/register">Add a Resource</Button>
+            <Button on:click={() => (isModalOpen = true)}>Add a Resource</Button
+            >
         </div>
     {:else}
         <div class="space-y-4">
@@ -155,6 +167,11 @@
         <InfiniteLoading on:infinite={fetchResources} />
     {/if}
 </main>
+
+<AddResourceModal
+    bind:open={isModalOpen}
+    on:resourceAdded={handleResourceAdded}
+/>
 
 <style>
     :global(body) {
