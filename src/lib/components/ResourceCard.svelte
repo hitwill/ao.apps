@@ -15,7 +15,7 @@
 
     function getResourceIcon(type: string) {
         switch (type) {
-            case 'app':
+            case 'application':
                 return Sticker;
             case 'website':
                 return Globe;
@@ -28,6 +28,10 @@
         }
     }
 
+    function getResourceTypeLabel(type: string) {
+        return type.charAt(0).toUpperCase() + type.slice(1).replace('-', ' ');
+    }
+
     function handleUpvote() {
         if (resource.id !== undefined) {
             dispatch('upvote', resource.id);
@@ -37,25 +41,29 @@
     import { createEventDispatcher } from 'svelte';
     import { Card } from './ui/card';
     import { Button } from './ui/button';
+    import { Badge } from './ui/badge';
     const dispatch = createEventDispatcher();
 </script>
 
 <Card class="p-4 hover:shadow-lg transition-shadow duration-200">
     <div class="flex justify-between items-start">
-        <div>
+        <div class="flex-grow">
             <div class="flex items-center mb-2">
                 <svelte:component
                     this={getResourceIcon(resource.type)}
                     size={20}
-                    class="mr-2"
+                    class="mr-2 text-gray-600"
                 />
                 <h3 class="text-xl font-semibold">{resource.name}</h3>
-                <span class="ml-2 text-sm text-gray-500"
-                    >{resource.ecosystem}</span
+            </div>
+            <div class="flex items-center mb-2 text-sm text-gray-600">
+                <Badge variant="secondary" class="mr-2"
+                    >{getResourceTypeLabel(resource.type)}</Badge
                 >
+                <span>{resource.ecosystem}</span>
             </div>
             <p class="text-gray-600 mb-2">{resource.description}</p>
-            <div class="flex flex-wrap gap-2">
+            <div class="flex flex-wrap gap-2 mt-2">
                 {#each splitTags(resource.tags) as tag}
                     <span
                         class="bg-gray-200 text-gray-700 px-2 py-1 rounded text-sm"
@@ -64,7 +72,7 @@
                 {/each}
             </div>
         </div>
-        <div class="flex flex-col items-end">
+        <div class="flex flex-col items-end ml-4">
             <Button
                 variant="ghost"
                 on:click={handleUpvote}
