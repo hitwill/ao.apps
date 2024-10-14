@@ -41,6 +41,7 @@ class DatabaseService {
         searchParams: {
             category?: string;
             ecosystem?: string;
+            type?: string;
             tags?: string[];
             search?: string;
         } = {},
@@ -65,6 +66,10 @@ class DatabaseService {
                 (tag) => `tags LIKE '%${tag}%'`
             );
             conditions.push(`(${tagConditions.join(' OR ')})`);
+        }
+
+        if (searchParams.type && searchParams.type !== 'all') {
+            conditions.push(`type = '${searchParams.type}'`);
         }
 
         if (searchParams.search) {

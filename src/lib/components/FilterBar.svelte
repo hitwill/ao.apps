@@ -1,5 +1,11 @@
 <script lang="ts">
-    import { SORT_OPTIONS, CATEGORIES, ECOSYSTEMS, TAGS } from '$lib/constants';
+    import {
+        SORT_OPTIONS,
+        CATEGORIES,
+        ECOSYSTEMS,
+        TAGS,
+        SUBMISSION_TYPES,
+    } from '$lib/constants';
     import type { Writable } from 'svelte/store';
     import type { SortOption, Selected } from '$lib/types';
     import { createEventDispatcher } from 'svelte';
@@ -17,6 +23,7 @@
 
     export let selectedEcosystem: Writable<Selected<string>>;
     export let selectedCategory: Writable<Selected<string>>;
+    export let selectedType: Writable<Selected<string>>;
     export let currentSort: Writable<SortOption>;
     export let selectedTags: Writable<string[]>;
 
@@ -51,6 +58,7 @@
     function clearFilters() {
         $selectedEcosystem = ECOSYSTEMS[0];
         $selectedCategory = CATEGORIES[0];
+        $selectedType = SUBMISSION_TYPES[0];
         $selectedTags = [];
         dispatch('filter');
     }
@@ -121,6 +129,25 @@
                         {#each CATEGORIES as category}
                             <SelectItem value={category.value}
                                 >{category.label}</SelectItem
+                            >
+                        {/each}
+                    </SelectContent>
+                </Select>
+            </div>
+
+            <div>
+                <Label for="type-select" class="mb-2 block">Type</Label>
+                <Select
+                    bind:selected={$selectedType}
+                    on:select={() => dispatch('filter')}
+                >
+                    <SelectTrigger id="type-select" class="w-full">
+                        <SelectValue placeholder="All Types" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {#each SUBMISSION_TYPES as type}
+                            <SelectItem value={type.value}
+                                >{type.label}</SelectItem
                             >
                         {/each}
                     </SelectContent>

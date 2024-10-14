@@ -3,7 +3,12 @@
     import { writable } from 'svelte/store';
     import { databaseService } from '$lib/database/DatabaseService';
     import type { FetchResource } from '$lib/database/types';
-    import { SORT_OPTIONS, CATEGORIES, ECOSYSTEMS } from '$lib/constants';
+    import {
+        SORT_OPTIONS,
+        CATEGORIES,
+        ECOSYSTEMS,
+        SUBMISSION_TYPES,
+    } from '$lib/constants';
     import { filterResources, sortResources } from '$lib/utils/resourceHelpers';
     import ResourceCard from '$lib/components/ResourceCard.svelte';
     import FilterBar from '$lib/components/FilterBar.svelte';
@@ -19,6 +24,7 @@
     let currentSort = writable(SORT_OPTIONS[0]);
     let selectedCategory = writable(CATEGORIES[0]);
     let selectedEcosystem = writable(ECOSYSTEMS[0]);
+    let selectedType = writable(SUBMISSION_TYPES[0]);
     let selectedTags = writable<string[]>([]);
     let isLoading = writable(true);
     let page = 0;
@@ -48,6 +54,7 @@
             {
                 category: $selectedCategory.value,
                 ecosystem: $selectedEcosystem.value,
+                type: $selectedType.value,
                 tags: $selectedTags,
                 search: $searchQuery,
             },
@@ -101,6 +108,7 @@
         $searchQuery,
         $selectedCategory.value,
         $selectedEcosystem.value,
+        $selectedType.value,
         $selectedTags
     );
     $: sortedResources = sortResources(filteredResources, $currentSort.value);
@@ -109,6 +117,7 @@
         $searchQuery;
         $selectedCategory;
         $selectedEcosystem;
+        $selectedType;
         $selectedTags;
         $currentSort;
         resetResources();
@@ -142,6 +151,7 @@
     <FilterBar
         bind:selectedEcosystem
         bind:selectedCategory
+        bind:selectedType
         bind:currentSort
         bind:selectedTags
         on:sort={resetResources}

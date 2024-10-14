@@ -5,30 +5,42 @@ import type { SortOption } from '$lib/types';
 export function filterResources(
     resources: FetchResource[],
     searchQuery: string,
-    category: string,
-    ecosystem: string,
-    tags: string[]
+    selectedCategory: string,
+    selectedEcosystem: string,
+    selectedType: string,
+    selectedTags: string[]
 ): FetchResource[] {
-    const lowercaseQuery = searchQuery.toLowerCase();
-    const filteredResources = resources.filter((resource: FetchResource) => {
-        const searchMatch =
-            resource.name.toLowerCase().includes(lowercaseQuery) ||
-            resource.description.toLowerCase().includes(lowercaseQuery);
-        const tagMatch =
-            tags.length === 0 ||
-            tags.some((tag) => resource.tags.includes(tag));
+    return resources.filter((resource) => {
+        const matchesSearch =
+            searchQuery === '' ||
+            resource.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            resource.description
+                .toLowerCase()
+                .includes(searchQuery.toLowerCase());
 
-        const categoryMatch =
-            category === 'all' || resource.category === category;
-        const ecosystemMatch =
-            ecosystem === 'all' || resource.ecosystem === ecosystem;
-        return searchMatch && categoryMatch && ecosystemMatch && tagMatch;
+        const matchesCategory =
+            selectedCategory === 'all' ||
+            resource.category === selectedCategory;
+
+        const matchesEcosystem =
+            selectedEcosystem === 'all' ||
+            resource.ecosystem === selectedEcosystem;
+
+        const matchesType =
+            selectedType === 'all' || resource.type === selectedType;
+
+        const matchesTags =
+            selectedTags.length === 0 ||
+            selectedTags.every((tag) => resource.tags.includes(tag));
+
+        return (
+            matchesSearch &&
+            matchesCategory &&
+            matchesEcosystem &&
+            matchesType &&
+            matchesTags
+        );
     });
-
-    // Ensure uniqueness based on id
-    return Array.from(
-        new Map(filteredResources.map((r) => [r.id, r])).values()
-    );
 }
 
 export function sortResources(
