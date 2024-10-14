@@ -7,6 +7,7 @@
     import { Input } from '$lib/components/ui/input';
     import { Label } from '$lib/components/ui/label';
     import { Textarea } from '$lib/components/ui/textarea';
+    import TagSelect from './TagSelect.svelte';
     import {
         Select,
         SelectContent,
@@ -37,18 +38,22 @@
         (type) => type.value !== 'all'
     );
 
-    let resource: SaveResource = {
+    let resource = {
         name: '',
         link: '',
         description: '',
         type: '',
-        tags: '',
+        tags: [],
         category: '',
         ecosystem: '' as 'arweave' | 'ao',
     };
 
     let isSubmitting = false;
     let errorMessage = '';
+
+    function handleTagsChange(event: CustomEvent<string[]>) {
+        resource.tags = event.detail;
+    }
 
     async function handleSubmit() {
         isSubmitting = true;
@@ -68,8 +73,14 @@
             isSubmitting = false;
             return;
         }
+        const submissionResource: SaveResource = {
+            ...resource,
+            tags: resource.tags.join(', '),
+        };
 
-        const result = await databaseService.createResource(resource);
+        console.log({ submissionResource });
+        return;
+        const result = await databaseService.createResource(submissionResource);
 
         if (result.status) {
             dispatch('resourceAdded', resource);
@@ -91,7 +102,7 @@
             link: '',
             description: '',
             type: '',
-            tags: '',
+            tags: [],
             category: '',
             ecosystem: '' as 'arweave' | 'ao',
         };
@@ -156,13 +167,13 @@
                 </Select>
             </div>
             <div class="space-y-2">
-                <Label for="tags">Tags</Label>
-                <Input
-                    id="tags"
-                    bind:value={resource.tags}
-                    placeholder="Comma-separated tags"
-                    required
-                />
+                <div class="space-y-2">
+                    <Label for="tags">Tags</Label>
+                    <TagSelect
+                        bind:selectedTags={resource.tags}
+                        on:change={handleTagsChange}
+                    />
+                </div>
             </div>
             <div class="space-y-2">
                 <Label for="category">Category</Label>
