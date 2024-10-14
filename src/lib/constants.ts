@@ -50,112 +50,67 @@ export const ECOSYSTEMS: Selected<string>[] = [
 // src/lib/constants.ts
 
 export const TAGS = [
-    // General
-    'decentralized',
-    'blockchain',
-    'web3',
-    'cryptocurrency',
-    'open-source',
+    // Wallet and Transactions
+    'wallet',
+    'transaction',
+    'escrow',
+    'micropayments',
 
-    // Arweave-specific
-    'permanent-storage',
-    'data-storage',
-    'permaweb',
-    'ar-token',
-
-    // AO-specific
-    'ao-token',
-    'compute-market',
-    'distributed-computing',
-
-    // Common use cases
-    'file-sharing',
+    // User Applications
+    'browser-extension',
+    'mobile-app',
     'social-media',
-    'nft',
-    'defi',
-    'dao',
-    'identity',
     'messaging',
+    'file-sharing',
+    'gaming',
+    'metaverse',
+    'nft',
 
-    // Development-related
+    // Code and Development
     'smart-contract',
+    'smart-contracts',
     'dapp',
+    'dapps',
     'sdk',
     'api',
     'library',
     'framework',
     'developer-tools',
-
-    // Infrastructure
-    'node',
-    'gateway',
-    'explorer',
-    'indexer',
-
-    // Wallet and transactions
-    'wallet',
-    'browser-extension',
-    'mobile-app',
-    'transaction',
-    'atomic-assets',
-
-    // Integration and interoperability
-    'bridge',
-    'cross-chain',
-    'multichain',
-
-    // Community and governance
-    'community',
-    'governance',
-    'voting',
-
-    // Content and media
-    'content-creation',
-    'publishing',
-    'blogging',
-    'video',
-    'audio',
-    'streaming',
-
-    // Analytics and data
-    'analytics',
-    'data-visualization',
-    'machine-learning',
-    'ai',
-
-    // Security and privacy
-    'encryption',
-    'privacy',
-    'anonymity',
-
-    // Economic models
-    'tokenomics',
-    'incentive-system',
-    'profit-sharing',
-
-    // Emerging concepts
-    'metaverse',
-    'augmented-reality',
-    'virtual-reality',
-    'iot',
-
-    // Ecosystem-specific applications
-    'ardrive',
-    'arconnect',
-    'arweave-news',
-    'viewblock',
-    'ao-cli',
-    'ao-explorer',
-
-    // Development status
-    'production',
-    'beta',
-    'alpha',
-    'concept',
-
-    // Other
-    'education',
-    'documentation',
     'tutorial',
-    'use-case',
+
+    // Financial Ecosystem
+    'defi',
+    'stablecoins',
+    'yield-farming',
+    'liquidity-pool',
+    'tokens',
+    'tokenomics',
+
+    // Governance and DAOs
+    'dao',
+    'governance',
+    'reputation',
+    'crowdfunding',
+
+    // Infrastructure and Protocols
+    'storage',
+    'data-indexing',
+    'oracle',
+    'staking',
+    'bridge',
+    'interoperability',
+    'cross-chain',
+    'layer2',
+
+    // Privacy and Security
+    'privacy',
+    'zk-snarks',
+    'identity',
+    'digital-rights',
+    'digital-ownership',
+
+    // Community and Tools
+    'community-tools',
+    'archiving',
+    'web3',
 ];
