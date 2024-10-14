@@ -16,6 +16,20 @@ export const CATEGORIES: Selected<string>[] = [
     { value: 'tutorial', label: 'Tutorials' },
     { value: 'library', label: 'Libraries' },
     { value: 'smart-contract', label: 'Smart Contracts' },
+export const SUBMISSION_TYPES: Selected<string>[] = [
+    { value: 'all', label: 'All Types' },
+    { value: 'application', label: 'Application (App)' },
+    { value: 'website', label: 'Website' },
+    { value: 'library', label: 'Library/SDK' },
+    { value: 'smart-contract', label: 'Smart Contract' },
+    { value: 'tool', label: 'Tool/Utility' },
+    { value: 'documentation', label: 'Documentation' },
+    { value: 'tutorial', label: 'Tutorial/Guide' },
+    { value: 'wallet', label: 'Wallet' },
+    { value: 'explorer', label: 'Explorer/Indexer' },
+    { value: 'gateway', label: 'Gateway' },
+    { value: 'community', label: 'Community Resource' },
+    { value: 'token', label: 'Token/Cryptocurrency' },
 ];
 
 export const ECOSYSTEMS: Selected<string>[] = [
