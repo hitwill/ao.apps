@@ -2,7 +2,7 @@
     import { createEventDispatcher } from 'svelte';
     import { databaseService } from '$lib/database/DatabaseService';
     import type { SaveResource } from '$lib/database/types';
-    import { CATEGORIES, ECOSYSTEMS } from '$lib/constants';
+    import { CATEGORIES, ECOSYSTEMS, SUBMISSION_TYPES } from '$lib/constants';
     import { Button } from '$lib/components/ui/button';
     import { Input } from '$lib/components/ui/input';
     import { Label } from '$lib/components/ui/label';
@@ -26,12 +26,15 @@
     export let open = false;
 
     const dispatch = createEventDispatcher();
-    // Filter out the 'All Categories' and 'All Ecosystems' options
+    // Filter out the 'All Categories', 'All Ecosystems', and 'All Types' options
     const filteredCategories = CATEGORIES.filter(
         (category) => category.value !== 'all'
     );
     const filteredEcosystems = ECOSYSTEMS.filter(
         (ecosystem) => ecosystem.value !== 'all'
+    );
+    const filteredTypes = SUBMISSION_TYPES.filter(
+        (type) => type.value !== 'all'
     );
 
     let resource: SaveResource = {
@@ -61,12 +64,11 @@
             !resource.ecosystem
         ) {
             errorMessage =
-                'Please fill in all fields, including category and ecosystem.';
+                'Please fill in all fields, including category, type, and ecosystem.';
             isSubmitting = false;
             return;
         }
-        console.log(resource);
-        return;
+
         const result = await databaseService.createResource(resource);
 
         if (result.status) {
@@ -137,12 +139,21 @@
             </div>
             <div class="space-y-2">
                 <Label for="type">Resource Type</Label>
-                <Input
-                    id="type"
-                    bind:value={resource.type}
-                    placeholder="e.g., App, Library, Tool"
-                    required
-                />
+                <Select
+                    bind:selected={resource.type}
+                    on:select={() => dispatch('filter')}
+                >
+                    <SelectTrigger id="type-select" class="w-full">
+                        <SelectValue placeholder="Select a resource type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {#each filteredTypes as type}
+                            <SelectItem value={type.value}
+                                >{type.label}</SelectItem
+                            >
+                        {/each}
+                    </SelectContent>
+                </Select>
             </div>
             <div class="space-y-2">
                 <Label for="tags">Tags</Label>
