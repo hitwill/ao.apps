@@ -9,13 +9,22 @@ export const SORT_OPTIONS: SortOption[] = [
 
 export const CATEGORIES: Selected<string>[] = [
     { value: 'all', label: 'All Categories' },
-    { value: 'app', label: 'Apps' },
-    { value: 'meme-coin', label: 'Meme Coins' },
-    { value: 'project', label: 'Projects' },
-    { value: 'websites', label: 'Websites' },
-    { value: 'tutorial', label: 'Tutorials' },
-    { value: 'library', label: 'Libraries' },
-    { value: 'smart-contract', label: 'Smart Contracts' },
+    { value: 'defi', label: 'DeFi (Decentralized Finance)' },
+    { value: 'social', label: 'Social & Communication' },
+    { value: 'storage', label: 'Storage & Data Management' },
+    { value: 'nft', label: 'NFTs & Digital Collectibles' },
+    { value: 'gaming', label: 'Gaming & Metaverse' },
+    { value: 'identity', label: 'Identity & Authentication' },
+    { value: 'dao', label: 'DAOs & Governance' },
+    { value: 'infrastructure', label: 'Infrastructure & Scalability' },
+    { value: 'analytics', label: 'Analytics & Data Visualization' },
+    { value: 'content', label: 'Content Creation & Publishing' },
+    { value: 'privacy', label: 'Privacy & Security' },
+    { value: 'education', label: 'Education & Research' },
+    { value: 'marketplace', label: 'Marketplaces & Exchanges' },
+    { value: 'integration', label: 'Integrations & Interoperability' },
+];
+
 export const SUBMISSION_TYPES: Selected<string>[] = [
     { value: 'all', label: 'All Types' },
     { value: 'application', label: 'Application (App)' },
