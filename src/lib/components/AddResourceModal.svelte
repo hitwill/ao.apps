@@ -76,10 +76,11 @@
         const submissionResource: SaveResource = {
             ...resource,
             tags: resource.tags.join(', '),
+            category: resource.category.value,
+            ecosystem: resource.ecosystem.value,
+            type: resource.type.value,
         };
 
-        console.log({ submissionResource });
-        return;
         const result = await databaseService.createResource(submissionResource);
 
         if (result.status) {
