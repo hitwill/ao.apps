@@ -32,10 +32,15 @@
         return type.charAt(0).toUpperCase() + type.slice(1).replace('-', ' ');
     }
 
-    function handleUpvote() {
+    function handleUpvote(event: MouseEvent) {
+        event.stopPropagation();
         if (resource.id !== undefined) {
             dispatch('upvote', resource.id);
         }
+    }
+
+    function handleCardClick() {
+        window.open(resource.link, '_blank', 'noopener,noreferrer');
     }
 
     import { createEventDispatcher } from 'svelte';
@@ -45,8 +50,14 @@
     const dispatch = createEventDispatcher();
 </script>
 
-<Card class="p-4 hover:shadow-lg transition-shadow duration-200">
-    <div class="flex justify-between items-start">
+<Card class="p-4 hover:shadow-lg transition-shadow duration-200 cursor-pointer">
+    <!-- svelte-ignore a11y-interactive-supports-focus -->
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <div
+        class="flex justify-between items-start"
+        on:click={handleCardClick}
+        role="link"
+    >
         <div class="flex-grow">
             <div class="flex items-center mb-2">
                 <svelte:component
@@ -76,18 +87,11 @@
             <Button
                 variant="ghost"
                 on:click={handleUpvote}
-                class="flex items-center mb-2"
+                class="flex items-center"
                 aria-label="Upvote this resource"
             >
                 <ArrowUpCircle class="mr-1" size={16} />
                 {resource.votes}
-            </Button>
-            <Button
-                variant="outline"
-                href={`/details/${resource.id}`}
-                class="text-sm"
-            >
-                View Details
             </Button>
         </div>
     </div>
