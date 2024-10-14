@@ -1,4 +1,7 @@
 export function joinTags(tags: string[]): string {
+    if (typeof tags === 'string') {
+        return tags;
+    }
     return tags.join(', ');
 }
 

@@ -47,12 +47,14 @@
         tags: [],
         category: '',
         ecosystem: '' as 'arweave' | 'ao',
+        votes: 0,
     };
 
     let isSubmitting = false;
     let errorMessage = '';
 
     function handleTagsChange(event: CustomEvent<string[]>) {
+        //@ts-ignore
         resource.tags = event.detail;
     }
 
@@ -74,15 +76,22 @@
             isSubmitting = false;
             return;
         }
-        const submissionResource: SaveResource = {
+        resource = {
             ...resource,
+            //@ts-ignore
             tags: joinTags(resource.tags),
+            //@ts-ignore
             category: resource.category.value,
+            //@ts-ignore
             ecosystem: resource.ecosystem.value,
+            //@ts-ignore
             type: resource.type.value,
         };
 
-        const result = await databaseService.createResource(submissionResource);
+        const result = await databaseService.createResource(
+            //@ts-ignore
+            resource as SaveResource
+        );
 
         if (result.status) {
             dispatch('resourceAdded', resource);
@@ -107,6 +116,7 @@
             tags: [],
             category: '',
             ecosystem: '' as 'arweave' | 'ao',
+            votes: 0,
         };
         errorMessage = '';
     }
