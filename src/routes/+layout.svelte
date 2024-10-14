@@ -3,13 +3,6 @@
     import { page } from '$app/stores';
 </script>
 
-<nav>
-    <a href="/" class:active={$page.url.pathname === '/'}>Home</a>
-    <a href="/register" class:active={$page.url.pathname === '/register'}
-        >Register App</a
-    >
-</nav>
-
 <main>
     <slot />
 </main>
