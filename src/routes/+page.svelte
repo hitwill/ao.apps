@@ -12,6 +12,7 @@
     import { Button } from '$lib/components/ui/button';
     import InfiniteLoading from 'svelte-infinite-loading';
     import AddResourceModal from '$lib/components/AddResourceModal.svelte';
+    import { splitTags, joinTags } from '$lib/utils/tagHelpers';
 
     let resources: FetchResource[] = [];
     let searchQuery = writable('');
@@ -89,6 +90,8 @@
 
     function handleResourceAdded(event: CustomEvent) {
         const newResource = event.detail;
+        // Ensure tags are in the correct format
+        newResource.tags = joinTags(newResource.tags);
         resources = [newResource, ...resources];
         resources = sortResources(resources, $currentSort.value);
     }

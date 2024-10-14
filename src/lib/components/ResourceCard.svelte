@@ -9,6 +9,7 @@
         Layers,
     } from 'lucide-svelte';
     import type { FetchResource } from '$lib/database/types';
+    import { splitTags } from '$lib/utils/tagHelpers';
 
     export let resource: FetchResource;
 
@@ -55,7 +56,7 @@
             </div>
             <p class="text-gray-600 mb-2">{resource.description}</p>
             <div class="flex flex-wrap gap-2">
-                {#each resource.tags.split(',') as tag}
+                {#each splitTags(resource.tags) as tag}
                     <span
                         class="bg-gray-200 text-gray-700 px-2 py-1 rounded text-sm"
                         >{tag.trim()}</span

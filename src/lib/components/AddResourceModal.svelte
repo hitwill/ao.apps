@@ -23,6 +23,7 @@
         DialogHeader,
         DialogTitle,
     } from './ui/dialog';
+    import { joinTags, splitTags } from '$lib/utils/tagHelpers';
 
     export let open = false;
 
@@ -75,7 +76,7 @@
         }
         const submissionResource: SaveResource = {
             ...resource,
-            tags: resource.tags.join(', '),
+            tags: joinTags(resource.tags),
             category: resource.category.value,
             ecosystem: resource.ecosystem.value,
             type: resource.type.value,
